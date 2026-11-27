@@ -8,7 +8,7 @@ const page = document.body.dataset.page;
 /* ---------- fejléc + lábléc ---------- */
 $("#hdr").outerHTML = `
 <header class="hdr" id="hdr"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/brand.webp" alt="LS_VT" width="114" height="38"></a>
+  <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/brand.webp" alt="LS_VT" width="60" height="34"></a>
   <nav class="nav" id="nav" aria-label="Fő navigáció">
     <a href="csapat.html" ${page === "team" ? 'class="on"' : ""}>A csapat</a>
     <a href="technika.html" ${page === "tech" ? 'class="on"' : ""}>A technika</a>
@@ -79,7 +79,8 @@ function addToCart(p, opts) {
   save(); toast("Kosárba téve ✓");
 }
 function renderCart() {
-  $("#cartCount").textContent = cart.reduce((s, i) => s + i.q, 0);
+  const n = cart.reduce((s, i) => s + i.q, 0);
+  $("#cartCount").textContent = n; $("#cartCount").hidden = !n;
   $("#items").innerHTML = cart.length ? cart.map((i, k) => `
     <div class="it"><img src="${i.img}" alt="">
       <div><strong>${esc(i.name)}</strong><small>${Object.entries(i.opts).map(([a, v]) => `${esc(a)}: ${esc(v)}`).join(" · ")}</small>
@@ -104,7 +105,8 @@ document.addEventListener("click", e => {
   if (o) { e.preventDefault(); productsReady.then(() => openProduct(+o.dataset.open)); }
   if (e.target.id === "checkout") openCheckout();
 });
-$("#modal").onclick = e => e.target.id === "modal" && closeAll();
+// Kapcsos zárójel kell: az onclick-ból visszaadott false minden kattintást visszavonna a modalban (checkbox, linkek).
+$("#modal").onclick = e => { if (e.target.id === "modal") closeAll(); };
 
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("on"), 1800); }
 function modal(html) { $("#mbox").innerHTML = `<button class="x" data-close>×</button>` + html; $("#modal").classList.add("on"); $("#ov").classList.add("on"); }
@@ -161,9 +163,13 @@ function openCheckout() {
     const body = `Rendelés: ${id}\n\n${lines}\n\nÖsszesen: ${ft(total())}\n\nNév: ${d.nev}\nTel: ${d.tel}\nE-mail: ${d.email}\nSzállítás: ${d.szall}\nFizetés: ${d.fiz}\nCím: ${d.irsz} ${d.varos}, ${d.cim}\nMegjegyzés: ${d.megj}`;
     // TODO: éles üzemben a rendelés a backendre megy (Supabase/WooCommerce API); addig e-mailben továbbítjuk.
     location.href = `mailto:${SHOP.email}?subject=${encodeURIComponent("Új rendelés " + id)}&body=${encodeURIComponent(body)}`;
-    cart = []; save();
-    $("#mbox").innerHTML = `<button class="x" data-close>×</button><div class="ok"><span class="eyebrow">Köszönjük!</span><h2>Rendelés rögzítve</h2>
-      <p style="color:var(--mut)">Azonosító: <strong style="color:#fff">${id}</strong><br>Hamarosan visszaigazoljuk e-mailben. Kérdés esetén: ${SHOP.phone}</p></div>`;
+    // A kosár csak akkor ürül, ha a vásárló jelzi, hogy elküldte az e-mailt; addig a rendelés nincs nálunk.
+    $("#mbox").innerHTML = `<button class="x" data-close>×</button><div class="ok"><span class="eyebrow">Még egy lépés</span><h2>Küldd el az e-mailt</h2>
+      <p style="color:var(--mut)">A rendelés (<strong style="color:#fff">${id}</strong>) a leveleződben nyílt meg. Akkor kapjuk meg, ha onnan elküldöd.<br>
+      Ha nem nyílt meg, írj az <strong style="color:#fff">${SHOP.email}</strong> címre, vagy hívj: ${SHOP.phone}</p>
+      <textarea readonly rows="7" style="width:100%;margin:18px 0;background:var(--card);color:var(--fg);border:1px solid var(--line);padding:12px;font:13px/1.5 var(--ff)">${esc(body)}</textarea>
+      <button class="btn btn-red" id="orderSent" style="justify-content:center">Elküldtem, kosár ürítése</button></div>`;
+    $("#orderSent").onclick = () => { cart = []; save(); closeAll(); toast("Köszönjük a rendelést!"); };
   };
 }
 
@@ -172,7 +178,7 @@ window.LSVT = { productsReady, card, get products() { return PRODUCTS; } };
 
 /* Finom belépés a szekciókba; tartalom JS nélkül is látható. */
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const targets = document.querySelectorAll('.split, .head-row, .pill, .contact, .cats');
+  const targets = document.querySelectorAll('.split, .head-row, .pill, .contact');
   const observer = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
   }), {threshold: .08});

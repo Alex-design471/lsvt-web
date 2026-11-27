@@ -85,6 +85,13 @@
     };
     start.addEventListener('click', activate);
     start.addEventListener('keydown', e => { if (e.code === 'Space' && e.repeat) e.preventDefault(); });
+    // A szóköz a gombon kívül is indít/megállít, ahogy a leírás ígéri (űrlapmezőkben nem).
+    document.addEventListener('keydown', e => {
+      if (e.code !== 'Space' || e.repeat || e.target === start || e.target.closest('input,textarea,select,button,a')) return;
+      const r = start.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      e.preventDefault(); activate();
+    });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden && state !== 'idle') { clear(); state = 'idle'; lights.forEach(l => l.classList.remove('lit')); result.textContent = 'Készen állsz?'; start.textContent = 'Indítás'; }
     });

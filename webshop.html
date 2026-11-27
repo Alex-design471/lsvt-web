@@ -33,8 +33,8 @@
 <script src="assets/app.js"></script>
 <script>
 const url = new URLSearchParams(location.search);
-let cat = url.get("k") || "Összes";
 const CATS = ["Összes", "Női ruházat", "Férfi ruházat", "Gyerek ruházat", "Sport ruházat", "Kesztyű", "Kiegészítők"];
+let cat = CATS.includes(url.get("k")) ? url.get("k") : "Összes";
 const chips = document.getElementById("chips"), grid = document.getElementById("grid");
 const q = document.getElementById("q"), sort = document.getElementById("sort");
 function render() {
