@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Webshop – LS_VT Powerteam</title>
+<meta name="description" content="LS_VT csapatruházat: női, férfi és gyerek sportruházat, kesztyűk és kiegészítők.">
+<link rel="icon" href="assets/img/logo-dark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="shop">
+<div id="hdr"></div>
+
+<div class="shop-hero"><div class="wrap">
+  <span class="eyebrow">LS_VT Webshop</span>
+  <h1>Csapatruházat</h1>
+  <div class="tools">
+    <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    <span class="sp"></span>
+    <input id="q" type="search" placeholder="Keresés…" aria-label="Keresés">
+    <select id="sort" aria-label="Rendezés"><option value="">Ajánlott</option><option value="asc">Ár szerint növekvő</option><option value="desc">Ár szerint csökkenő</option><option value="name">Név szerint</option></select>
+  </div>
+</div></div>
+
+<section style="padding-top:10px"><div class="wrap">
+  <p class="steps" id="count"></p>
+  <div class="pgrid" id="grid"></div>
+</div></section>
+
+<div id="ftr"></div>
+<script src="assets/app.js"></script>
+<script>
+const url = new URLSearchParams(location.search);
+let cat = url.get("k") || "Összes";
+const CATS = ["Összes", "Női ruházat", "Férfi ruházat", "Gyerek ruházat", "Sport ruházat", "Kesztyű", "Kiegészítők"];
+const chips = document.getElementById("chips"), grid = document.getElementById("grid");
+const q = document.getElementById("q"), sort = document.getElementById("sort");
+function render() {
+  chips.innerHTML = CATS.filter(c => c === "Összes" || LSVT.products.some(p => p.cats.includes(c)))
+    .map(c => `<button class="chip ${c === cat ? "on" : ""}" data-c="${c}">${c}</button>`).join("");
+  const s = q.value.trim().toLowerCase();
+  let ps = LSVT.products.filter(p => (cat === "Összes" || p.cats.includes(cat)) && (!s || p.name.toLowerCase().includes(s)));
+  if (sort.value === "asc") ps.sort((a, b) => a.price - b.price);
+  if (sort.value === "desc") ps.sort((a, b) => b.price - a.price);
+  if (sort.value === "name") ps.sort((a, b) => a.name.localeCompare(b.name, "hu"));
+  document.getElementById("count").textContent = ps.length + " termék";
+  grid.innerHTML = ps.length ? ps.map(LSVT.card).join("") : `<p class="empty">Nincs találat.</p>`;
+}
+chips.onclick = e => { const b = e.target.closest("[data-c]"); if (!b) return; cat = b.dataset.c;
+  history.replaceState(null, "", cat === "Összes" ? "webshop.html" : "?k=" + encodeURIComponent(cat)); render(); };
+q.oninput = sort.onchange = render;
+LSVT.productsReady.then(render);
+</script>
+</body>
+</html>
