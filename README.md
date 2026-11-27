@@ -12,7 +12,7 @@ Statikus oldal (HTML/CSS/JS, build nélkül).
 | `aszf.html` | Az LS-VT Kft. ÁSZF-je a régi oldalról, változatlan szöveggel |
 | `adatvedelem.html` | Adatkezelési tájékoztató **tervezet** (jogásszal ellenőriztetni) |
 | `404.html` | Hibaoldal ismeretlen címekre |
-| `admin.html` | Rendelések kezelése (bejelentkezés, státusz, belső megjegyzés); nincs a menüben, noindex |
+| `kezeles-*.html` | Admin: rendelések és üzenetek (bejelentkezés, státusz, belső megjegyzés). Szándékosan nehezen kitalálható név, nincs a menüben, noindex |
 
 - `assets/app.js` – közös fejléc/lábléc, kosár (localStorage), termék modal, pénztár
 - `assets/experience.js` – oldalátmenet, görgetésjelző, játék, technika, galéria, kapcsolat űrlap

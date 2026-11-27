@@ -2,7 +2,14 @@
 const SHOP = { email: "info@ls-vt.hu", phone: "+36 20 314 5919" };
 /* Rendeléskezelés (Supabase). Ha az url üres, a rendelés e-mailben megy (tartalék mód).
    A publishable kulcs nyilvános: a rendelés csak a shop_place_order() függvényen át írható, olvasni nem lehet. */
-const BACKEND = { url: "", key: "" };
+const BACKEND = { url: "https://fkkglayztlvhevwvcylg.supabase.co", key: "sb_publishable_cOgSJ3loUf8-rIaFcrP2Cg_VKG9iblM" };
+/* Nyilvános RPC hívás (rendelés, üzenet). Hibánál a szerver üzenetével dob. */
+async function rpc(fn, payload) {
+  const r = await fetch(`${BACKEND.url}/rest/v1/rpc/${fn}`, { method: "POST", headers: { "Content-Type": "application/json", apikey: BACKEND.key }, body: JSON.stringify({ payload }) });
+  const res = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(res.message || "A küldés nem sikerült.");
+  return res;
+}
 const SOCIAL = [
   ["Facebook", "https://www.facebook.com/lsvtcoachingmanagement", '<path d="M14 8h3V4h-3c-2.8 0-4 1.7-4 4.2V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/>'],
   ["Instagram", "https://www.instagram.com/ls_vt_powerteam/", '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3"/>'],
@@ -186,14 +193,9 @@ function openCheckout() {
     if (BACKEND.url) {
       const btn = cf.querySelector("button.btn"); btn.disabled = true; btn.textContent = "Küldés…";
       try {
-        const r = await fetch(`${BACKEND.url}/rest/v1/rpc/shop_place_order`, {
-          method: "POST", headers: { "Content-Type": "application/json", apikey: BACKEND.key, Authorization: `Bearer ${BACKEND.key}` },
-          body: JSON.stringify({ payload: {
-            customer: { name: d.nev, phone: d.tel, email: d.email, shipping: d.szall, payment: d.fiz, zip: d.irsz, city: d.varos, address: d.cim, note: d.megj },
-            items: cart.map(i => ({ id: i.id, q: i.q, opts: i.opts })) } })
-        });
-        const res = await r.json();
-        if (!r.ok) throw new Error(res.message || "A rendelést nem sikerült rögzíteni.");
+        const res = await rpc("shop_place_order", {
+          customer: { name: d.nev, phone: d.tel, email: d.email, shipping: d.szall, payment: d.fiz, zip: d.irsz, city: d.varos, address: d.cim, note: d.megj },
+          items: cart.map(i => ({ id: i.id, q: i.q, opts: i.opts })) });
         cart = []; save();
         $("#mbox").innerHTML = `<button class="x" data-close>×</button><div class="ok"><span class="eyebrow">Köszönjük!</span><h2>Rendelés rögzítve</h2>
           <p style="color:var(--mut)">Rendelésszám: <strong style="color:#fff">${esc(res.order_no)}</strong><br>Termékek összesen: <strong style="color:#fff">${ft(res.subtotal)}</strong> (szállítás nélkül)<br>

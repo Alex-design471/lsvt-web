@@ -4,7 +4,7 @@
   const el = id => document.getElementById(id);
   if (!BACKEND.url || !window.supabase) { el("cfg").hidden = false; el("adm-sub").textContent = ""; return; }
   const sb = window.supabase.createClient(BACKEND.url, BACKEND.key);
-  let orders = [], filter = "nyitott";
+  let orders = [], messages = [], filter = "nyitott";
 
   const show = async () => {
     const { data: { session } } = await sb.auth.getSession();
@@ -22,19 +22,33 @@
 
   async function load() {
     el("list").innerHTML = `<p class="steps">Betöltés…</p>`;
-    const { data, error } = await sb.from("shop_orders").select("*").order("created_at", { ascending: false }).limit(500);
+    const [o, m] = await Promise.all([
+      sb.from("shop_orders").select("*").order("created_at", { ascending: false }).limit(500),
+      sb.from("shop_messages").select("*").order("created_at", { ascending: false }).limit(300)]);
+    const error = o.error || m.error;
     if (error) { el("list").innerHTML = `<p class="form-err">Nem sikerült betölteni: ${esc(error.message)}</p>`; return; }
-    orders = data;
-    if (!orders.length) { el("list").innerHTML = `<p class="steps">Még nincs rendelés. Ha biztosan van, ellenőrizd, hogy a fiókod szerepel-e a shop_admins táblában.</p>`; }
+    orders = o.data; messages = m.data;
     render();
   }
 
   function render() {
     const open = o => !["teljesitve", "torolve"].includes(o.status);
     const groups = { nyitott: ["Nyitott", orders.filter(open)], ...Object.fromEntries(Object.entries(STATUS).map(([k, v]) => [k, [v, orders.filter(o => o.status === k)]])), osszes: ["Összes", orders] };
-    el("filters").innerHTML = Object.entries(groups).map(([k, [n, l]]) => `<button class="chip ${k === filter ? "on" : ""}" data-f="${k}">${n} <sup>${l.length}</sup></button>`).join("");
+    const unread = messages.filter(x => !x.handled).length;
+    el("filters").innerHTML = Object.entries(groups).map(([k, [n, l]]) => `<button class="chip ${k === filter ? "on" : ""}" data-f="${k}">${n} <sup>${l.length}</sup></button>`).join("")
+      + `<button class="chip ${filter === "uzenetek" ? "on" : ""}" data-f="uzenetek">Üzenetek <sup>${unread ? unread + " új" : messages.length}</sup></button>`;
+    if (filter === "uzenetek") {
+      el("list").innerHTML = messages.length ? messages.map(x => `
+      <article class="adm-order" data-mid="${x.id}">
+        <header><div><strong>${esc(x.subject)}</strong><small>${new Date(x.created_at).toLocaleString("hu-HU")} · ${esc(x.name)} · <a href="mailto:${esc(x.email)}">${esc(x.email)}</a></small></div>
+          <span class="adm-st ${x.handled ? "st-teljesitve" : "st-uj"}">${x.handled ? "Kezelve" : "Új"}</span></header>
+        <p class="adm-note" style="white-space:pre-wrap">${esc(x.message)}</p>
+        <div class="adm-actions"><button class="btn btn-ghost" data-done="${x.handled ? "0" : "1"}">${x.handled ? "Visszaállítás újra" : "Kezeltnek jelölöm"}</button></div>
+      </article>`).join("") : `<p class="steps">Még nincs üzenet.</p>`;
+      return;
+    }
     const list = groups[filter][1];
-    if (!orders.length) return;
+    if (!orders.length) { el("list").innerHTML = `<p class="steps">Még nincs rendelés. Ha biztosan van, ellenőrizd, hogy a fiókod szerepel-e a shop_admins táblában.</p>`; return; }
     el("list").innerHTML = list.length ? list.map(o => `
       <article class="adm-order" data-id="${o.id}">
         <header><div><strong>${esc(o.order_no)}</strong><small>${new Date(o.created_at).toLocaleString("hu-HU")}</small></div>
@@ -55,6 +69,13 @@
 
   el("filters").onclick = e => { const b = e.target.closest("[data-f]"); if (b) { filter = b.dataset.f; render(); } };
   el("list").onclick = async e => {
+    const d = e.target.closest("[data-done]");
+    if (d) {
+      d.disabled = true;
+      const { error } = await sb.from("shop_messages").update({ handled: d.dataset.done === "1" }).eq("id", d.closest("[data-mid]").dataset.mid);
+      if (error) { d.disabled = false; toast("Mentés sikertelen: " + error.message); return; }
+      toast("Mentve ✓"); load(); return;
+    }
     const b = e.target.closest("[data-save]"); if (!b) return;
     const card = b.closest(".adm-order");
     b.disabled = true;

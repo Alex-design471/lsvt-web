@@ -354,3 +354,4 @@ h2{font-size:3.1rem}
 .st-teljesitve{background:#1f9d55;color:#fff}
 .st-torolve{opacity:.5}
 @media(max-width:820px){.adm-cols{grid-template-columns:1fr}}
+.form-ok{color:#5fd38d}

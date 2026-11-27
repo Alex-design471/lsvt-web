@@ -51,11 +51,23 @@
       hero.style.setProperty('--orbit-y', `${(e.clientY / innerHeight - .5) * 25}px`);
     }, {passive:true});
   }
-  // Contact form stays a transparent email handoff.
+  // Kapcsolat űrlap: az üzenet az adatbázisba kerül (admin felület); ha nincs backend, e-mail kézbesítés.
   const contact = document.getElementById('kf');
-  if (contact) contact.addEventListener('submit', e => {
+  if (contact) contact.addEventListener('submit', async e => {
     e.preventDefault(); const d = Object.fromEntries(new FormData(contact));
-    location.href = `mailto:info@ls-vt.hu?subject=${encodeURIComponent(d.targy + ' – ' + d.nev)}&body=${encodeURIComponent(d.uzenet + '\n\n' + d.nev + ' <' + d.email + '>')}`;
+    const note = contact.querySelector('.form-note'), btn = contact.querySelector('button');
+    if (typeof BACKEND === 'undefined' || !BACKEND.url) {
+      location.href = `mailto:info@ls-vt.hu?subject=${encodeURIComponent(d.targy + ' – ' + d.nev)}&body=${encodeURIComponent(d.uzenet + '\n\n' + d.nev + ' <' + d.email + '>')}`;
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'Küldés…';
+    try {
+      await rpc('shop_send_message', { name: d.nev, email: d.email, subject: d.targy, message: d.uzenet });
+      contact.reset(); note.className = 'form-note form-ok'; note.textContent = 'Köszönjük, megkaptuk az üzeneted! Hamarosan válaszolunk.';
+    } catch (err) {
+      note.className = 'form-note form-err'; note.textContent = `${err.message.replace(/[.!?]?$/, '.')} Írj az info@ls-vt.hu címre, vagy hívj: +36 20 314 5919.`;
+    }
+    btn.disabled = false; btn.textContent = 'Üzenet küldése';
   });
   // Start-light reaction game. All times are measured locally with performance.now().
   const start = document.getElementById('reaction-button');
