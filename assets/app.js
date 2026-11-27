@@ -40,7 +40,7 @@ $("#ftr").outerHTML = `
     <div><h4>Elérhetőség</h4><ul><li>7150 Bonyhád, Fáy ltp. 7/A. 3/8.</li><li><a href="tel:+36203145919">${SHOP.phone}</a></li><li><a href="mailto:${SHOP.email}">${SHOP.email}</a></li>
       <li>${socialHTML()}</li></ul></div>
   </div>
-  <div class="fbot"><span>© ${new Date().getFullYear()} LS_VT Powerteam · <a href="https://ls-vt.hu/altalanos-szerzodesi-feltetelek/">ÁSZF</a> · <a href="https://ls-vt.hu/adatkezelesi-tajekoztato/">Adatvédelem</a></span>
+  <div class="fbot"><span>© ${new Date().getFullYear()} LS_VT Powerteam · <a href="aszf.html">ÁSZF</a> · <a href="adatvedelem.html">Adatvédelem</a></span>
   <span>Részletfotók: Peter Kocsar Photography · LS_VT csapatfotók</span></div>
 </div></footer>
 <div class="ov" id="ov"></div>
@@ -166,9 +166,9 @@ function openCheckout() {
       <div class="row"><input name="irsz" placeholder="Irányítószám" autocomplete="postal-code"><input name="varos" placeholder="Település" autocomplete="address-level2"></div>
       <input name="cim" placeholder="Utca, házszám" autocomplete="street-address">
       <textarea name="megj" rows="3" placeholder="Megjegyzés (pl. egyedi felirat, rajtszám)"></textarea>
-      <label style="display:flex;gap:10px;align-items:flex-start;color:var(--mut);font-size:.9rem"><input type="checkbox" required style="width:auto;margin-top:4px"> Elfogadom az <a href="https://ls-vt.hu/altalanos-szerzodesi-feltetelek/" target="_blank" style="text-decoration:underline">ÁSZF</a>-et és az adatkezelési tájékoztatót.</label>
+      <label style="display:flex;gap:10px;align-items:flex-start;color:var(--mut);font-size:.9rem"><input type="checkbox" required style="width:auto;margin-top:4px"> Elfogadom az <a href="aszf.html" target="_blank" style="text-decoration:underline">ÁSZF</a>-et és az <a href="adatvedelem.html" target="_blank" style="text-decoration:underline">adatkezelési tájékoztatót</a>.</label>
       <div class="tot" style="margin-top:6px"><span>Végösszeg (szállítás nélkül)</span><span>${ft(total())}</span></div>
-      <p class="steps">A szállítási díjat és a fizetés részleteit visszaigazoló e-mailben küldjük.</p>
+      <p class="steps">Futáros szállítás: nettó 1 300 Ft + áfa csomagonként, utánvét esetén további nettó 250 Ft + áfa (ÁSZF szerint). Személyes átvételnél nincs szállítási díj. A pontos végösszeget visszaigazoló e-mailben küldjük.</p>
       <button class="btn btn-red" style="justify-content:center">Megrendelem</button>
     </form></div>`);
   $("#cf").onsubmit = e => {
@@ -192,7 +192,7 @@ function openCheckout() {
 document.querySelectorAll("[data-social]").forEach(el => el.innerHTML = socialHTML());
 
 renderCart();
-window.LSVT = { productsReady, card, get products() { return PRODUCTS; } };
+window.LSVT = { productsReady, card, openProduct, get products() { return PRODUCTS; } };
 
 /* Finom belépés a szekciókba; tartalom JS nélkül is látható. */
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {

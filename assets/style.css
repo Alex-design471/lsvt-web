@@ -322,3 +322,4 @@ h2{font-size:3.1rem}
 .social-center .social{justify-content:center}
 .hdr .logo{display:block;line-height:0}
 .social-center .social a{color:#111;border-color:#cfcfcf}.social-center .social a:hover{color:#fff}
+.legal{max-width:860px;padding-block:50px 110px;color:#c9ccd1;line-height:1.8}.legal h2{font-size:clamp(1.6rem,3vw,2.2rem);margin:56px 0 16px;color:#fff}.legal h4{font-size:1.05rem;margin:28px 0 8px;color:#fff;text-transform:none;letter-spacing:0}.legal p,.legal li{margin:0 0 14px}.legal ul,.legal ol{padding-left:22px;margin-bottom:16px}.legal a{color:#fff;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}.legal strong{color:#fff}.legal-note{border:1px solid var(--red);background:#f02c3d14;padding:18px 20px;margin-bottom:30px}.legal-links{display:flex;gap:12px;flex-wrap:wrap}.legal-links a{text-decoration:none}

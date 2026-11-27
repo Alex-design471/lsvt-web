@@ -51,7 +51,7 @@ function render() {
 chips.onclick = e => { const b = e.target.closest("[data-c]"); if (!b) return; cat = b.dataset.c;
   history.replaceState(null, "", cat === "Összes" ? "webshop.html" : "?k=" + encodeURIComponent(cat)); render(); };
 q.oninput = sort.onchange = render;
-LSVT.productsReady.then(render);
+LSVT.productsReady.then(() => { render(); const t = +url.get("termek"); if (t && LSVT.products.some(p => p.id === t)) LSVT.openProduct(t); });
 </script>
 <script src="assets/experience.js"></script></body>
 </html>
