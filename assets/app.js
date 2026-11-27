@@ -1,5 +1,11 @@
 /* LS_VT – közös logika: fejléc, lábléc, kosár, termék modal, pénztár */
 const SHOP = { email: "info@ls-vt.hu", phone: "+36 20 314 5919" };
+const SOCIAL = [
+  ["Facebook", "https://www.facebook.com/lsvtcoachingmanagement", '<path d="M14 8h3V4h-3c-2.8 0-4 1.7-4 4.2V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/>'],
+  ["Instagram", "https://www.instagram.com/ls_vt_powerteam/", '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3"/>'],
+  ["TikTok", "https://www.tiktok.com/@ls_vt_powerteam", '<path d="M16.5 3c.4 2.3 1.9 3.8 4.3 4v3.2c-1.6 0-3-.4-4.3-1.2v6.3c0 3.5-2.6 5.7-5.6 5.7-3.2 0-5.4-2.5-5.4-5.4 0-3.3 2.9-5.8 6.4-5.3v3.3c-1.6-.4-3.1.6-3.1 2.1 0 1.2 1 2.2 2.2 2.2 1.4 0 2.3-1 2.3-2.6V3z"/>']
+];
+const socialHTML = () => `<div class="social">${SOCIAL.map(([n, u, d]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="LS_VT Powerteam – ${n}" title="${n}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">${d}</svg></a>`).join("")}</div>`;
 const ft = n => n.toLocaleString("hu-HU") + " Ft";
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -8,7 +14,7 @@ const page = document.body.dataset.page;
 /* ---------- fejléc + lábléc ---------- */
 $("#hdr").outerHTML = `
 <header class="hdr" id="hdr"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/brand.webp" alt="LS_VT" width="60" height="34"></a>
+  <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/logo-mark.png" alt="LSVT Powerteam by Sövér" width="120" height="34"></a>
   <nav class="nav" id="nav" aria-label="Fő navigáció">
     <a href="csapat.html" ${page === "team" ? 'class="on"' : ""}>A csapat</a>
     <a href="technika.html" ${page === "tech" ? 'class="on"' : ""}>A technika</a>
@@ -27,12 +33,12 @@ $("#hdr").outerHTML = `
 $("#ftr").outerHTML = `
 <footer><div class="wrap">
   <div class="fgrid">
-    <div><img src="assets/img/brand.webp" alt="LS_VT" style="height:40px;width:auto;margin-bottom:16px">
+    <div><img src="assets/img/logo-mark.png" alt="LSVT Powerteam by Sövér" width="141" height="40" style="height:40px;width:auto;margin-bottom:16px">
       <p>LS_VT Coaching &amp; Management – gokart pilóták felkészítése, csapatmenedzsment és csapatruházat.</p></div>
     <div><h4>Oldalak</h4><ul><li><a href="csapat.html">Csapat</a></li><li><a href="galeria.html">Galéria</a></li><li><a href="webshop.html">Webshop</a></li><li><a href="csapat.html#kapcsolat">Kapcsolat</a></li></ul></div>
     <div><h4>Webshop</h4><ul><li><a href="webshop.html?k=Férfi ruházat">Férfi ruházat</a></li><li><a href="webshop.html?k=Női ruházat">Női ruházat</a></li><li><a href="webshop.html?k=Gyerek ruházat">Gyerek ruházat</a></li><li><a href="webshop.html?k=Kiegészítők">Kiegészítők</a></li></ul></div>
     <div><h4>Elérhetőség</h4><ul><li>7150 Bonyhád, Fáy ltp. 7/A. 3/8.</li><li><a href="tel:+36203145919">${SHOP.phone}</a></li><li><a href="mailto:${SHOP.email}">${SHOP.email}</a></li>
-      <li><a href="https://www.facebook.com/lsvtcoachingmanagement" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/ls_vt_powerteam/" target="_blank" rel="noopener">Instagram</a></li></ul></div>
+      <li>${socialHTML()}</li></ul></div>
   </div>
   <div class="fbot"><span>© ${new Date().getFullYear()} LS_VT Powerteam · <a href="https://ls-vt.hu/altalanos-szerzodesi-feltetelek/">ÁSZF</a> · <a href="https://ls-vt.hu/adatkezelesi-tajekoztato/">Adatvédelem</a></span>
   <span>Részletfotók: Peter Kocsar Photography · LS_VT csapatfotók</span></div>
@@ -72,11 +78,11 @@ try { cart = JSON.parse(localStorage.getItem("lsvt-cart") || "[]"); } catch { }
 const save = () => { try { localStorage.setItem("lsvt-cart", JSON.stringify(cart)); } catch { } renderCart(); };
 const total = () => cart.reduce((s, i) => s + i.price * i.q, 0);
 
-function addToCart(p, opts) {
+function addToCart(p, opts, q = 1) {
   const key = p.id + "|" + Object.values(opts).join("|");
   const ex = cart.find(i => i.key === key);
-  ex ? ex.q++ : cart.push({ key, id: p.id, name: p.name, img: p.img[0], price: p.price, opts, q: 1 });
-  save(); toast("Kosárba téve ✓");
+  ex ? ex.q += q : cart.push({ key, id: p.id, name: p.name, img: p.img[0], price: p.price, opts, q });
+  save(); toast(q > 1 ? `${q} db kosárba téve ✓` : "Kosárba téve ✓");
 }
 function renderCart() {
   const n = cart.reduce((s, i) => s + i.q, 0);
@@ -84,12 +90,17 @@ function renderCart() {
   $("#items").innerHTML = cart.length ? cart.map((i, k) => `
     <div class="it"><img src="${i.img}" alt="">
       <div><strong>${esc(i.name)}</strong><small>${Object.entries(i.opts).map(([a, v]) => `${esc(a)}: ${esc(v)}`).join(" · ")}</small>
-        <div class="qty"><button data-q="${k}" data-d="-1">−</button>${i.q}<button data-q="${k}" data-d="1">+</button></div></div>
+        <div class="qty"><button data-q="${k}" data-d="-1" aria-label="Kevesebb">−</button><input class="qn" data-k="${k}" type="number" min="1" max="99" value="${i.q}" aria-label="Darabszám"><button data-q="${k}" data-d="1" aria-label="Több">+</button></div></div>
       <strong>${ft(i.price * i.q)}</strong></div>`).join("") : `<p class="empty">A kosarad üres.</p>`;
   $("#dfoot").innerHTML = cart.length ? `<div class="tot"><span>Részösszeg</span><span>${ft(total())}</span></div>
     <button class="btn btn-red" id="checkout" style="justify-content:center">Tovább a pénztárhoz</button>` :
     `<a class="btn btn-ghost" href="webshop.html" style="justify-content:center">Irány a webshop</a>`;
 }
+$("#items").onchange = e => {
+  const inp = e.target.closest(".qn"); if (!inp) return;
+  const v = parseInt(inp.value, 10); const k = +inp.dataset.k;
+  if (!v || v < 1) cart.splice(k, 1); else cart[k].q = Math.min(99, v); save();
+};
 $("#items").onclick = e => {
   const b = e.target.closest("[data-q]"); if (!b) return;
   const i = cart[+b.dataset.q]; i.q += +b.dataset.d; if (i.q < 1) cart.splice(+b.dataset.q, 1); save();
@@ -124,17 +135,22 @@ function openProduct(id) {
       <div class="pr">${priceTxt(p)}</div>${p.desc ? `<p style="color:var(--mut)">${esc(p.desc)}</p>` : ""}
       ${attrs.map(([a, vals]) => `<div><label>${esc(a)}</label><div class="opts" data-attr="${esc(a)}" style="margin-top:8px">${(a === "Méret" ? sortSize(vals) : vals).map(v => `<button class="opt" data-v="${esc(v)}">${esc(v)}</button>`).join("")}</div></div>`).join("")}
       <p class="steps" id="hint"></p>
-      <button class="btn btn-red" id="addBtn" style="justify-content:center">Kosárba</button>
+      <div class="buy"><div class="qty-pick"><button type="button" data-step="-1" aria-label="Kevesebb">−</button><input id="qtyIn" type="number" inputmode="numeric" min="1" max="99" value="1" aria-label="Mennyiség"><button type="button" data-step="1" aria-label="Több">+</button></div>
+      <button class="btn btn-red" id="addBtn" style="justify-content:center">Kosárba</button></div>
     </div></div>`);
   $("#mbox").querySelectorAll(".thumbs img").forEach(t => t.onclick = () => { $("#mainImg").src = t.dataset.src; $("#mbox").querySelectorAll(".thumbs img").forEach(x => x.classList.toggle("on", x === t)); });
   $("#mbox").querySelectorAll(".opts").forEach(g => g.onclick = e => {
     const b = e.target.closest(".opt"); if (!b) return;
     g.querySelectorAll(".opt").forEach(x => x.classList.toggle("on", x === b)); sel[g.dataset.attr] = b.dataset.v; $("#hint").textContent = "";
   });
+  const qtyIn = $("#qtyIn");
+  const qty = () => Math.min(99, Math.max(1, parseInt(qtyIn.value, 10) || 1));
+  $("#mbox").querySelectorAll("[data-step]").forEach(b => b.onclick = () => { qtyIn.value = Math.min(99, Math.max(1, qty() + +b.dataset.step)); });
+  qtyIn.onchange = () => { qtyIn.value = qty(); };
   $("#addBtn").onclick = () => {
     const miss = attrs.map(a => a[0]).filter(a => !sel[a]);
     if (miss.length) { $("#hint").textContent = "Válassz: " + miss.join(", ").toLowerCase(); return; }
-    addToCart(p, sel); closeAll(); openDrawer();
+    addToCart(p, sel, qty()); closeAll(); openDrawer();
   };
 }
 
@@ -172,6 +188,8 @@ function openCheckout() {
     $("#orderSent").onclick = () => { cart = []; save(); closeAll(); toast("Köszönjük a rendelést!"); };
   };
 }
+
+document.querySelectorAll("[data-social]").forEach(el => el.innerHTML = socialHTML());
 
 renderCart();
 window.LSVT = { productsReady, card, get products() { return PRODUCTS; } };
