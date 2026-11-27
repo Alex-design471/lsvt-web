@@ -16,17 +16,16 @@ $("#hdr").outerHTML = `
 <header class="hdr" id="hdr"><div class="wrap">
   <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/logo-mark.png" alt="LSVT Powerteam by Sövér" width="120" height="34"></a>
   <nav class="nav" id="nav" aria-label="Fő navigáció">
-    <a href="csapat.html" ${page === "team" ? 'class="on"' : ""}>A csapat</a>
-    <a href="technika.html" ${page === "tech" ? 'class="on"' : ""}>A technika</a>
-    <a href="galeria.html" ${page === "gallery" ? 'class="on"' : ""}>A paddock</a>
+    <a href="csapat.html" ${page === "team" ? 'class="on"' : ""}><span class="na">A </span>csapat</a>
+    <a href="technika.html" ${page === "tech" ? 'class="on"' : ""}><span class="na">A </span>technika</a>
+    <a href="galeria.html" ${page === "gallery" ? 'class="on"' : ""}><span class="na">A </span>paddock</a>
     <a href="webshop.html" ${page === "shop" ? 'class="on"' : ""}>Webshop</a>
-    <a href="csapat.html#kapcsolat">Csatlakozz ↗</a>
+    <a href="csapat.html#kapcsolat">Csatlakozz<span class="na"> ↗</span></a>
   </nav>
   <div style="display:flex;gap:8px">
     <button class="cartbtn" id="cartOpen" aria-label="Kosár">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
       <b id="cartCount">0</b></button>
-    <button class="burger cartbtn" id="burger" aria-label="Menü" aria-controls="nav" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   </div>
 </div></header>`;
 
@@ -55,8 +54,6 @@ $("#ftr").outerHTML = `
 const hdr = $("#hdr");
 const solid = () => hdr.classList.toggle("solid", scrollY > 40 || page === "shop");
 addEventListener("scroll", solid); solid();
-$("#burger").onclick = () => { const open = $("#nav").classList.toggle("open"); $("#burger").setAttribute("aria-expanded", open); };
-$("#nav").onclick = e => { if (e.target.closest("a")) { $("#nav").classList.remove("open"); $("#burger").setAttribute("aria-expanded", "false"); } };
 
 /* ---------- termékek ---------- */
 let PRODUCTS = [];

@@ -219,3 +219,20 @@ body:has(dialog[open]){overflow:hidden}
 .race-orbit{transform:none}
 .motion-ready .portal,.motion-ready .work-strip{opacity:1;transform:none}
 .brand-stage img,.race-title>*{animation:none!important}}
+/* Keskeny képernyőn is kiírt menü: hamburger helyett a logó alatti, vízszintesen görgethető sor. */
+@media(max-width:820px){.hdr .wrap{height:auto;flex-wrap:wrap;padding-top:14px;column-gap:16px}
+.hdr .logo{order:1}
+.hdr .wrap>div:last-child{order:2}
+.nav{position:static;order:3;flex:0 0 100%;flex-direction:row;gap:22px;padding:14px 0 12px;margin-top:10px;border:0;border-top:1px solid #ffffff1c;background:none;visibility:visible;opacity:1;transform:none;transition:none;overflow-x:auto;scrollbar-width:none;align-items:center}
+.nav::-webkit-scrollbar{display:none}
+.nav a{font-size:11px;letter-spacing:.1em;flex:none}
+.race-intro{padding-top:150px}
+.chapter-head{padding-top:180px}
+.shop-hero{padding-top:170px}}
+@media(max-width:480px){.race-intro{padding-top:145px}
+.nav{gap:18px}}
+@media(max-width:480px){.nav .na{display:none}
+.nav{gap:16px;justify-content:space-between}
+.nav a{font-size:11px;letter-spacing:.06em}}
+@media(max-width:380px){.nav{gap:10px}
+.nav a{letter-spacing:.03em}}
