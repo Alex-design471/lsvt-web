@@ -10,11 +10,11 @@ $("#hdr").outerHTML = `
 <header class="hdr" id="hdr"><div class="wrap">
   <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/brand.webp" alt="LS_VT" width="114" height="38"></a>
   <nav class="nav" id="nav" aria-label="Fő navigáció">
-    <a href="index.html#csapat" ${page === "home" ? 'class="on"' : ""}>Csapat</a>
-    <a href="index.html#filozofia">Filozófia</a>
-    <a href="index.html#galeria">Galéria</a>
+    <a href="csapat.html" ${page === "team" ? 'class="on"' : ""}>A csapat</a>
+    <a href="technika.html" ${page === "tech" ? 'class="on"' : ""}>A technika</a>
+    <a href="galeria.html" ${page === "gallery" ? 'class="on"' : ""}>A paddock</a>
     <a href="webshop.html" ${page === "shop" ? 'class="on"' : ""}>Webshop</a>
-    <a href="index.html#kapcsolat">Kapcsolat</a>
+    <a href="csapat.html#kapcsolat">Csatlakozz ↗</a>
   </nav>
   <div style="display:flex;gap:8px">
     <button class="cartbtn" id="cartOpen" aria-label="Kosár">
@@ -29,7 +29,7 @@ $("#ftr").outerHTML = `
   <div class="fgrid">
     <div><img src="assets/img/brand.webp" alt="LS_VT" style="height:40px;width:auto;margin-bottom:16px">
       <p>LS_VT Coaching &amp; Management – gokart pilóták felkészítése, csapatmenedzsment és csapatruházat.</p></div>
-    <div><h4>Oldalak</h4><ul><li><a href="index.html#csapat">Csapat</a></li><li><a href="index.html#galeria">Galéria</a></li><li><a href="webshop.html">Webshop</a></li><li><a href="index.html#kapcsolat">Kapcsolat</a></li></ul></div>
+    <div><h4>Oldalak</h4><ul><li><a href="csapat.html">Csapat</a></li><li><a href="galeria.html">Galéria</a></li><li><a href="webshop.html">Webshop</a></li><li><a href="csapat.html#kapcsolat">Kapcsolat</a></li></ul></div>
     <div><h4>Webshop</h4><ul><li><a href="webshop.html?k=Férfi ruházat">Férfi ruházat</a></li><li><a href="webshop.html?k=Női ruházat">Női ruházat</a></li><li><a href="webshop.html?k=Gyerek ruházat">Gyerek ruházat</a></li><li><a href="webshop.html?k=Kiegészítők">Kiegészítők</a></li></ul></div>
     <div><h4>Elérhetőség</h4><ul><li>7150 Bonyhád, Fáy ltp. 7/A. 3/8.</li><li><a href="tel:+36203145919">${SHOP.phone}</a></li><li><a href="mailto:${SHOP.email}">${SHOP.email}</a></li>
       <li><a href="https://www.facebook.com/lsvtcoachingmanagement" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/ls_vt_powerteam/" target="_blank" rel="noopener">Instagram</a></li></ul></div>
