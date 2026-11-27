@@ -195,7 +195,7 @@ a,button{touch-action:manipulation}
 #szponzorok h2{font-size:2.8rem}
 #szponzorok .eyebrow{color:#777}
 .spons{gap:40px;align-items:center}
-.spons a,.spons .sponsor{min-width:180px;height:100px;padding:20px;display:grid;place-items:center;background:#fff;border-radius:0}
+.spons a{min-width:180px;height:100px;padding:20px;display:grid;place-items:center;background:#fff;border-radius:0}
 .spons img{max-height:60px;max-width:200px;object-fit:contain}
 #kapcsolat{padding:120px 0;background:#121416}
 .contact{gap:80px;grid-template-columns:1fr 1fr}
@@ -263,7 +263,7 @@ section{padding:80px 0}
 .tools select{flex:1}
 .shop-hero{padding-top:130px}
 .spons{gap:20px}
-.spons a,.spons .sponsor{min-width:120px}
+.spons a{min-width:120px}
 .f .row{grid-template-columns:1fr}
 .pd .info{padding:30px 22px}
 .pc h3{font-size:16px}
@@ -290,7 +290,7 @@ h2{font-size:3.1rem}
 .tools input,.tools select{width:100%;flex-basis:100%}
 .chip{font-size:12px;padding:9px 12px}
 .goals{grid-template-columns:1fr}
-.spons a,.spons .sponsor{height:80px;min-width:100px;padding:12px}
+.spons a{height:80px;min-width:100px;padding:12px}
 .spons img{max-width:130px;max-height:45px}
 .pd .gal2>img{max-height:330px}
 .tot{font-size:1.05rem;gap:14px}
@@ -332,4 +332,25 @@ h2{font-size:3.1rem}
 .legal-links{display:flex;gap:12px;flex-wrap:wrap}
 .legal-links a{text-decoration:none}
 .form-err{color:#ff6b78;font-size:.9rem;margin:0}
-.adm{padding-block:30px 100px}.adm-login{max-width:380px}.adm-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:24px}.adm-bar .sp{flex:1}.adm-filters{display:flex;gap:8px;flex-wrap:wrap}.adm-filters sup{font-size:.7em;margin-left:4px}.adm-list{display:grid;gap:16px}.adm-order{background:var(--card);border:1px solid var(--line);padding:20px;display:grid;gap:16px}.adm-order header{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.adm-order header>div{flex:1;min-width:0}.adm-order small{display:block;color:var(--mut);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}.adm-cols{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:20px;font-size:.92rem}.adm-cols>div{min-width:0;overflow-wrap:anywhere}.adm-note{margin:0;font-size:.92rem}.adm-actions{display:flex;gap:10px;flex-wrap:wrap}.adm-actions select,.adm-actions input{background:var(--bg2);border:1px solid var(--line);color:var(--fg);padding:10px 12px;font:inherit}.adm-actions input{flex:1;min-width:180px}.adm-st{padding:5px 10px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:#2a2e35}.st-uj{background:var(--red);color:#fff}.st-teljesitve{background:#1f9d55;color:#fff}.st-torolve{opacity:.5}@media(max-width:820px){.adm-cols{grid-template-columns:1fr}}
+.adm{padding-block:30px 100px}
+.adm-login{max-width:380px}
+.adm-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:24px}
+.adm-bar .sp{flex:1}
+.adm-filters{display:flex;gap:8px;flex-wrap:wrap}
+.adm-filters sup{font-size:.7em;margin-left:4px}
+.adm-list{display:grid;gap:16px}
+.adm-order{background:var(--card);border:1px solid var(--line);padding:20px;display:grid;gap:16px}
+.adm-order header{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.adm-order header>div{flex:1;min-width:0}
+.adm-order small{display:block;color:var(--mut);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.adm-cols{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:20px;font-size:.92rem}
+.adm-cols>div{min-width:0;overflow-wrap:anywhere}
+.adm-note{margin:0;font-size:.92rem}
+.adm-actions{display:flex;gap:10px;flex-wrap:wrap}
+.adm-actions select,.adm-actions input{background:var(--bg2);border:1px solid var(--line);color:var(--fg);padding:10px 12px;font:inherit}
+.adm-actions input{flex:1;min-width:180px}
+.adm-st{padding:5px 10px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:#2a2e35}
+.st-uj{background:var(--red);color:#fff}
+.st-teljesitve{background:#1f9d55;color:#fff}
+.st-torolve{opacity:.5}
+@media(max-width:820px){.adm-cols{grid-template-columns:1fr}}

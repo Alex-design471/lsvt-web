@@ -33,5 +33,4 @@ Ha a `BACKEND.url` üres, a pénztár e-mailes tartalék módban működik. Az �
 - Új rendelésről e-mail értesítés (és visszaigazolás a vevőnek) – ehhez e-mail-küldő szolgáltatás kell (pl. Resend) egy Supabase Edge Functionnel. Online fizetés (Barion/Stripe) később.
 - A kapcsolat űrlap továbbra is a látogató levelezőjében nyit e-mailt.
 - Az adatkezelési tájékoztató tervezetét szakemberrel ellenőriztetni; az ÁSZF a régi WooCommerce-folyamatot írja le (regisztráció, online rendelés), az új rendelési módhoz igazítani kell.
-- A „Praudit” szponzor linkje hiányzik.
 - `og:image` relatív útvonal: a végleges domainnel abszolút URL-re kell cserélni.
