@@ -1,7 +1,7 @@
 /* LS_VT – közös logika: fejléc, lábléc, kosár, termék modal, pénztár */
 const SHOP = { email: "info@ls-vt.hu", phone: "+36 20 314 5919" };
 /* Rendeléskezelés (Supabase). Ha az url üres, a rendelés e-mailben megy (tartalék mód).
-   A publishable kulcs nyilvános: a rendelés csak a place_order() függvényen át írható, olvasni nem lehet. */
+   A publishable kulcs nyilvános: a rendelés csak a shop_place_order() függvényen át írható, olvasni nem lehet. */
 const BACKEND = { url: "", key: "" };
 const SOCIAL = [
   ["Facebook", "https://www.facebook.com/lsvtcoachingmanagement", '<path d="M14 8h3V4h-3c-2.8 0-4 1.7-4 4.2V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/>'],
@@ -186,7 +186,7 @@ function openCheckout() {
     if (BACKEND.url) {
       const btn = cf.querySelector("button.btn"); btn.disabled = true; btn.textContent = "Küldés…";
       try {
-        const r = await fetch(`${BACKEND.url}/rest/v1/rpc/place_order`, {
+        const r = await fetch(`${BACKEND.url}/rest/v1/rpc/shop_place_order`, {
           method: "POST", headers: { "Content-Type": "application/json", apikey: BACKEND.key, Authorization: `Bearer ${BACKEND.key}` },
           body: JSON.stringify({ payload: {
             customer: { name: d.nev, phone: d.tel, email: d.email, shipping: d.szall, payment: d.fiz, zip: d.irsz, city: d.varos, address: d.cim, note: d.megj },

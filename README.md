@@ -22,12 +22,12 @@ Statikus oldal (HTML/CSS/JS, build nélkül).
 Helyi futtatás: `python3 -m http.server` → http://localhost:8000
 
 ## Rendeléskezelés (Supabase)
-1. Új Supabase projekt → SQL Editor: `supabase/schema.sql`, majd `supabase/seed_products.sql`.
+1. Supabase projekt (most: adoasszisztens, shop_ előtagú táblákkal) → SQL Editor: `supabase/schema.sql`, majd `supabase/seed_products.sql`.
 2. `assets/app.js` elején a `BACKEND` értékei: a projekt URL-je és a publishable (anon) kulcsa.
-3. Admin fiók: Authentication → Users → Add user (e-mail + jelszó), majd SQL: `insert into public.admins (user_id) select id from auth.users where email = '...';`
-4. Authentication → Sign In / Providers: a nyilvános regisztrációt (Allow new users to sign up) érdemes kikapcsolni.
+3. Admin fiók: Authentication → Users → Add user (e-mail + jelszó), majd SQL: `insert into public.shop_admins (user_id) select id from auth.users where email = '...';`
+4. A projektben az adóasszisztens is fut, ezért a nyilvános regisztrációt nem kapcsoljuk ki; egy regisztrált, de nem admin felhasználó a rendelésekhez nem fér hozzá (RLS + shop_admins).
 
-Ha a `BACKEND.url` üres, a pénztár e-mailes tartalék módban működik. Az árakat a szerver (`place_order`) számolja a `products` / `product_variants` táblából; árváltozáskor a `products.json`-t és a seed SQL-t is frissíteni kell.
+Ha a `BACKEND.url` üres, a pénztár e-mailes tartalék módban működik. Az árakat a szerver (`shop_place_order`) számolja a `shop_products` / `shop_product_variants` táblából; árváltozáskor a `products.json`-t és a seed SQL-t is frissíteni kell.
 
 ## Hátravan élesítés előtt
 - Új rendelésről e-mail értesítés (és visszaigazolás a vevőnek) – ehhez e-mail-küldő szolgáltatás kell (pl. Resend) egy Supabase Edge Functionnel. Online fizetés (Barion/Stripe) később.

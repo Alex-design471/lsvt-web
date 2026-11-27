@@ -22,10 +22,10 @@
 
   async function load() {
     el("list").innerHTML = `<p class="steps">Betöltés…</p>`;
-    const { data, error } = await sb.from("orders").select("*").order("created_at", { ascending: false }).limit(500);
+    const { data, error } = await sb.from("shop_orders").select("*").order("created_at", { ascending: false }).limit(500);
     if (error) { el("list").innerHTML = `<p class="form-err">Nem sikerült betölteni: ${esc(error.message)}</p>`; return; }
     orders = data;
-    if (!orders.length) { el("list").innerHTML = `<p class="steps">Még nincs rendelés. Ha biztosan van, ellenőrizd, hogy a fiókod szerepel-e az admins táblában.</p>`; }
+    if (!orders.length) { el("list").innerHTML = `<p class="steps">Még nincs rendelés. Ha biztosan van, ellenőrizd, hogy a fiókod szerepel-e a shop_admins táblában.</p>`; }
     render();
   }
 
@@ -58,7 +58,7 @@
     const b = e.target.closest("[data-save]"); if (!b) return;
     const card = b.closest(".adm-order");
     b.disabled = true;
-    const { error } = await sb.from("orders").update({ status: card.querySelector("[data-st]").value, admin_note: card.querySelector("[data-note]").value || null }).eq("id", card.dataset.id);
+    const { error } = await sb.from("shop_orders").update({ status: card.querySelector("[data-st]").value, admin_note: card.querySelector("[data-note]").value || null }).eq("id", card.dataset.id);
     b.disabled = false;
     if (error) { toast("Mentés sikertelen: " + error.message); return; }
     toast("Mentve ✓"); load();

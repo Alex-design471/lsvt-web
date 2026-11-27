@@ -1,5 +1,5 @@
 -- Termékek és méret szerinti árak. Újrafuttatható: frissíti a meglévő sorokat.
-insert into public.products (id, name, price) values
+insert into public.shop_products (id, name, price) values
 (37013, 'Gyermek hosszú ujjú sport felső UV-védelemmel', 4220),
 (37002, 'Női sport leggings', 4790),
 (36991, 'Női sport felső / top', 3490),
@@ -53,8 +53,8 @@ insert into public.products (id, name, price) values
 (99, 'Férfi kapucnis pulóver', 14650),
 (66, 'Férfi környakú póló', 2990)
 on conflict (id) do update set name = excluded.name, price = excluded.price, active = true;
-delete from public.product_variants;
-insert into public.product_variants (product_id, size, color, price) values
+delete from public.shop_product_variants;
+insert into public.shop_product_variants (product_id, size, color, price) values
 (36800, '3XL', null, 14450),
 (36131, 'XS/S', null, 1990),
 (36131, 'M/L', null, 1990),
