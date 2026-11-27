@@ -8,8 +8,8 @@ const page = document.body.dataset.page;
 /* ---------- fejléc + lábléc ---------- */
 $("#hdr").outerHTML = `
 <header class="hdr" id="hdr"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/logo-light.png" alt="LS_VT" width="114" height="38"></a>
-  <nav class="nav" id="nav">
+  <a class="logo" href="index.html" aria-label="LS_VT kezdőlap"><img src="assets/img/brand.webp" alt="LS_VT" width="114" height="38"></a>
+  <nav class="nav" id="nav" aria-label="Fő navigáció">
     <a href="index.html#csapat" ${page === "home" ? 'class="on"' : ""}>Csapat</a>
     <a href="index.html#filozofia">Filozófia</a>
     <a href="index.html#galeria">Galéria</a>
@@ -20,14 +20,14 @@ $("#hdr").outerHTML = `
     <button class="cartbtn" id="cartOpen" aria-label="Kosár">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
       <b id="cartCount">0</b></button>
-    <button class="burger cartbtn" id="burger" aria-label="Menü"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <button class="burger cartbtn" id="burger" aria-label="Menü" aria-controls="nav" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   </div>
 </div></header>`;
 
 $("#ftr").outerHTML = `
 <footer><div class="wrap">
   <div class="fgrid">
-    <div><img src="assets/img/logo-light.png" alt="LS_VT" style="height:40px;width:auto;margin-bottom:16px">
+    <div><img src="assets/img/brand.webp" alt="LS_VT" style="height:40px;width:auto;margin-bottom:16px">
       <p>LS_VT Coaching &amp; Management – gokart pilóták felkészítése, csapatmenedzsment és csapatruházat.</p></div>
     <div><h4>Oldalak</h4><ul><li><a href="index.html#csapat">Csapat</a></li><li><a href="index.html#galeria">Galéria</a></li><li><a href="webshop.html">Webshop</a></li><li><a href="index.html#kapcsolat">Kapcsolat</a></li></ul></div>
     <div><h4>Webshop</h4><ul><li><a href="webshop.html?k=Férfi ruházat">Férfi ruházat</a></li><li><a href="webshop.html?k=Női ruházat">Női ruházat</a></li><li><a href="webshop.html?k=Gyerek ruházat">Gyerek ruházat</a></li><li><a href="webshop.html?k=Kiegészítők">Kiegészítők</a></li></ul></div>
@@ -35,7 +35,7 @@ $("#ftr").outerHTML = `
       <li><a href="https://www.facebook.com/lsvtcoachingmanagement" target="_blank" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/ls_vt_powerteam/" target="_blank" rel="noopener">Instagram</a></li></ul></div>
   </div>
   <div class="fbot"><span>© ${new Date().getFullYear()} LS_VT Powerteam · <a href="https://ls-vt.hu/altalanos-szerzodesi-feltetelek/">ÁSZF</a> · <a href="https://ls-vt.hu/adatkezelesi-tajekoztato/">Adatvédelem</a></span>
-  <span>Sportfotók: <a href="https://www.facebook.com/race.sk/" target="_blank" rel="noopener">Race SK</a>, <a href="https://hajoka.hu/" target="_blank" rel="noopener">Hajósi Miklós</a></span></div>
+  <span>Részletfotók: Peter Kocsar Photography · LS_VT csapatfotók</span></div>
 </div></footer>
 <div class="ov" id="ov"></div>
 <aside class="drawer" id="drawer" aria-label="Kosár">
@@ -49,8 +49,8 @@ $("#ftr").outerHTML = `
 const hdr = $("#hdr");
 const solid = () => hdr.classList.toggle("solid", scrollY > 40 || page === "shop");
 addEventListener("scroll", solid); solid();
-$("#burger").onclick = () => $("#nav").classList.toggle("open");
-$("#nav").onclick = e => e.target.tagName === "A" && $("#nav").classList.remove("open");
+$("#burger").onclick = () => { const open = $("#nav").classList.toggle("open"); $("#burger").setAttribute("aria-expanded", open); };
+$("#nav").onclick = e => { if (e.target.closest("a")) { $("#nav").classList.remove("open"); $("#burger").setAttribute("aria-expanded", "false"); } };
 
 /* ---------- termékek ---------- */
 let PRODUCTS = [];
@@ -60,7 +60,7 @@ const priceTxt = p => p.max && p.max !== p.price ? `${ft(p.price)} – ${ft(p.ma
 
 function card(p) {
   return `<article class="pc">
-    <a class="ph" href="#" data-open="${p.id}">${p.img.map((s, i) => `<img src="${s}" alt="${i ? "" : esc(p.name)}" loading="lazy">`).join("")}</a>
+    <a class="ph" href="#" data-open="${p.id}">${p.img.slice(0, 2).map((s, i) => `<img src="${s}" alt="${i ? "" : esc(p.name)}" loading="lazy">`).join("")}</a>
     <div class="bd"><span class="ct">${esc(p.cats.filter(c => c !== "Sport ruházat")[0] || p.cats[0] || "")}</span>
       <h3>${esc(p.name)}</h3><span class="pr">${priceTxt(p)}</span>
       <button class="add" data-open="${p.id}">Kosárba</button></div></article>`;
@@ -169,3 +169,13 @@ function openCheckout() {
 
 renderCart();
 window.LSVT = { productsReady, card, get products() { return PRODUCTS; } };
+
+/* Finom belépés a szekciókba; tartalom JS nélkül is látható. */
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const targets = document.querySelectorAll('.split, .head-row, .pill, .contact, .cats');
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+  }), {threshold: .08});
+  targets.forEach(el => { el.classList.add('reveal'); observer.observe(el); });
+  document.documentElement.classList.add('reveal-ready');
+}
