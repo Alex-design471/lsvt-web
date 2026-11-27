@@ -1,5 +1,8 @@
 /* LS_VT – közös logika: fejléc, lábléc, kosár, termék modal, pénztár */
 const SHOP = { email: "info@ls-vt.hu", phone: "+36 20 314 5919" };
+/* Rendeléskezelés (Supabase). Ha az url üres, a rendelés e-mailben megy (tartalék mód).
+   A publishable kulcs nyilvános: a rendelés csak a place_order() függvényen át írható, olvasni nem lehet. */
+const BACKEND = { url: "", key: "" };
 const SOCIAL = [
   ["Facebook", "https://www.facebook.com/lsvtcoachingmanagement", '<path d="M14 8h3V4h-3c-2.8 0-4 1.7-4 4.2V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6z"/>'],
   ["Instagram", "https://www.instagram.com/ls_vt_powerteam/", '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3"/>'],
@@ -74,11 +77,16 @@ let cart = [];
 try { cart = JSON.parse(localStorage.getItem("lsvt-cart") || "[]"); } catch { }
 const save = () => { try { localStorage.setItem("lsvt-cart", JSON.stringify(cart)); } catch { } renderCart(); };
 const total = () => cart.reduce((s, i) => s + i.price * i.q, 0);
+const priceFor = (p, opts = {}) => {
+  const v = (p.variants || []).filter(v => v.size === opts["Méret"] && (!v.color || v.color === opts["Szín"]))
+    .sort((a, b) => (b.color ? 1 : 0) - (a.color ? 1 : 0))[0];
+  return v ? v.price : p.price;
+};
 
 function addToCart(p, opts, q = 1) {
   const key = p.id + "|" + Object.values(opts).join("|");
   const ex = cart.find(i => i.key === key);
-  ex ? ex.q += q : cart.push({ key, id: p.id, name: p.name, img: p.img[0], price: p.price, opts, q });
+  ex ? ex.q += q : cart.push({ key, id: p.id, name: p.name, img: p.img[0], price: priceFor(p, opts), opts, q });
   save(); toast(q > 1 ? `${q} db kosárba téve ✓` : "Kosárba téve ✓");
 }
 function renderCart() {
@@ -129,7 +137,7 @@ function openProduct(id) {
     <div class="gal2"><img id="mainImg" src="${p.img[0]}" alt="${esc(p.name)}">
       ${p.img.length > 1 ? `<div class="thumbs">${p.img.map((s, i) => `<img src="${s}" class="${i ? "" : "on"}" data-src="${s}" alt="">`).join("")}</div>` : ""}</div>
     <div class="info"><span class="eyebrow">${esc(p.cats.join(" · "))}</span><h2>${esc(p.name)}</h2>
-      <div class="pr">${priceTxt(p)}</div>${p.desc ? `<p style="color:var(--mut)">${esc(p.desc)}</p>` : ""}
+      <div class="pr" id="mPrice">${priceTxt(p)}</div>${p.desc ? `<p style="color:var(--mut)">${esc(p.desc)}</p>` : ""}
       ${attrs.map(([a, vals]) => `<div><label>${esc(a)}</label><div class="opts" data-attr="${esc(a)}" style="margin-top:8px">${(a === "Méret" ? sortSize(vals) : vals).map(v => `<button class="opt" data-v="${esc(v)}">${esc(v)}</button>`).join("")}</div></div>`).join("")}
       <p class="steps" id="hint"></p>
       <div class="buy"><div class="qty-pick"><button type="button" data-step="-1" aria-label="Kevesebb">−</button><input id="qtyIn" type="number" inputmode="numeric" min="1" max="99" value="1" aria-label="Mennyiség"><button type="button" data-step="1" aria-label="Több">+</button></div>
@@ -139,6 +147,7 @@ function openProduct(id) {
   $("#mbox").querySelectorAll(".opts").forEach(g => g.onclick = e => {
     const b = e.target.closest(".opt"); if (!b) return;
     g.querySelectorAll(".opt").forEach(x => x.classList.toggle("on", x === b)); sel[g.dataset.attr] = b.dataset.v; $("#hint").textContent = "";
+    if (p.variants && sel["Méret"]) $("#mPrice").textContent = ft(priceFor(p, sel));
   });
   const qtyIn = $("#qtyIn");
   const qty = () => Math.min(99, Math.max(1, parseInt(qtyIn.value, 10) || 1));
@@ -168,13 +177,39 @@ function openCheckout() {
       <p class="steps">Futáros szállítás: nettó 1 300 Ft + áfa csomagonként, utánvét esetén további nettó 250 Ft + áfa (ÁSZF szerint). Személyes átvételnél nincs szállítási díj. A pontos végösszeget visszaigazoló e-mailben küldjük.</p>
       <button class="btn btn-red" style="justify-content:center">Megrendelem</button>
     </form></div>`);
-  $("#cf").onsubmit = e => {
+  const cf = $("#cf");
+  const syncAddr = () => cf.querySelectorAll("[name=irsz],[name=varos],[name=cim]").forEach(i => i.required = cf.szall.value.startsWith("Házhoz"));
+  cf.szall.onchange = syncAddr; syncAddr();
+  cf.onsubmit = async e => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(e.target));
+    if (BACKEND.url) {
+      const btn = cf.querySelector("button.btn"); btn.disabled = true; btn.textContent = "Küldés…";
+      try {
+        const r = await fetch(`${BACKEND.url}/rest/v1/rpc/place_order`, {
+          method: "POST", headers: { "Content-Type": "application/json", apikey: BACKEND.key, Authorization: `Bearer ${BACKEND.key}` },
+          body: JSON.stringify({ payload: {
+            customer: { name: d.nev, phone: d.tel, email: d.email, shipping: d.szall, payment: d.fiz, zip: d.irsz, city: d.varos, address: d.cim, note: d.megj },
+            items: cart.map(i => ({ id: i.id, q: i.q, opts: i.opts })) } })
+        });
+        const res = await r.json();
+        if (!r.ok) throw new Error(res.message || "A rendelést nem sikerült rögzíteni.");
+        cart = []; save();
+        $("#mbox").innerHTML = `<button class="x" data-close>×</button><div class="ok"><span class="eyebrow">Köszönjük!</span><h2>Rendelés rögzítve</h2>
+          <p style="color:var(--mut)">Rendelésszám: <strong style="color:#fff">${esc(res.order_no)}</strong><br>Termékek összesen: <strong style="color:#fff">${ft(res.subtotal)}</strong> (szállítás nélkül)<br>
+          Hamarosan felvesszük veled a kapcsolatot a megadott e-mail-címen vagy telefonszámon. Kérdés esetén: ${SHOP.phone}</p></div>`;
+        return;
+      } catch (err) {
+        btn.disabled = false; btn.textContent = "Megrendelem";
+        let m = $("#cfErr"); if (!m) { m = document.createElement("p"); m.id = "cfErr"; m.className = "form-err"; btn.before(m); }
+        m.textContent = `${err.message.replace(/[.!?]?$/, ".")} Próbáld újra, vagy hívj minket: ${SHOP.phone}.`;
+        return;
+      }
+    }
     const id = "LSVT-" + Date.now().toString(36).toUpperCase();
     const lines = cart.map(i => `- ${i.name} (${Object.values(i.opts).join(", ")}) x${i.q} = ${ft(i.price * i.q)}`).join("\n");
     const body = `Rendelés: ${id}\n\n${lines}\n\nÖsszesen: ${ft(total())}\n\nNév: ${d.nev}\nTel: ${d.tel}\nE-mail: ${d.email}\nSzállítás: ${d.szall}\nFizetés: ${d.fiz}\nCím: ${d.irsz} ${d.varos}, ${d.cim}\nMegjegyzés: ${d.megj}`;
-    // TODO: éles üzemben a rendelés a backendre megy (Supabase/WooCommerce API); addig e-mailben továbbítjuk.
+    // Tartalék mód (nincs BACKEND.url): a rendelés a vásárló levelezőjéből megy e-mailben.
     location.href = `mailto:${SHOP.email}?subject=${encodeURIComponent("Új rendelés " + id)}&body=${encodeURIComponent(body)}`;
     // A kosár csak akkor ürül, ha a vásárló jelzi, hogy elküldte az e-mailt; addig a rendelés nincs nálunk.
     $("#mbox").innerHTML = `<button class="x" data-close>×</button><div class="ok"><span class="eyebrow">Még egy lépés</span><h2>Küldd el az e-mailt</h2>

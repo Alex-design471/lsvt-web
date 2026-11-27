@@ -12,6 +12,7 @@ Statikus oldal (HTML/CSS/JS, build nélkül).
 | `aszf.html` | Az LS-VT Kft. ÁSZF-je a régi oldalról, változatlan szöveggel |
 | `adatvedelem.html` | Adatkezelési tájékoztató **tervezet** (jogásszal ellenőriztetni) |
 | `404.html` | Hibaoldal ismeretlen címekre |
+| `admin.html` | Rendelések kezelése (bejelentkezés, státusz, belső megjegyzés); nincs a menüben, noindex |
 
 - `assets/app.js` – közös fejléc/lábléc, kosár (localStorage), termék modal, pénztár
 - `assets/experience.js` – oldalátmenet, görgetésjelző, játék, technika, galéria, kapcsolat űrlap
@@ -20,8 +21,17 @@ Statikus oldal (HTML/CSS/JS, build nélkül).
 
 Helyi futtatás: `python3 -m http.server` → http://localhost:8000
 
+## Rendeléskezelés (Supabase)
+1. Új Supabase projekt → SQL Editor: `supabase/schema.sql`, majd `supabase/seed_products.sql`.
+2. `assets/app.js` elején a `BACKEND` értékei: a projekt URL-je és a publishable (anon) kulcsa.
+3. Admin fiók: Authentication → Users → Add user (e-mail + jelszó), majd SQL: `insert into public.admins (user_id) select id from auth.users where email = '...';`
+4. Authentication → Sign In / Providers: a nyilvános regisztrációt (Allow new users to sign up) érdemes kikapcsolni.
+
+Ha a `BACKEND.url` üres, a pénztár e-mailes tartalék módban működik. Az árakat a szerver (`place_order`) számolja a `products` / `product_variants` táblából; árváltozáskor a `products.json`-t és a seed SQL-t is frissíteni kell.
+
 ## Hátravan élesítés előtt
-- A rendelés és a kapcsolat űrlap most a látogató levelezőjében nyit egy kitöltött e-mailt az info@ls-vt.hu címre. Élesben backend kell (Supabase vagy a WooCommerce API), opcionálisan online fizetés.
+- Új rendelésről e-mail értesítés (és visszaigazolás a vevőnek) – ehhez e-mail-küldő szolgáltatás kell (pl. Resend) egy Supabase Edge Functionnel. Online fizetés (Barion/Stripe) később.
+- A kapcsolat űrlap továbbra is a látogató levelezőjében nyit e-mailt.
 - Az adatkezelési tájékoztató tervezetét szakemberrel ellenőriztetni; az ÁSZF a régi WooCommerce-folyamatot írja le (regisztráció, online rendelés), az új rendelési módhoz igazítani kell.
 - A „Praudit” szponzor linkje hiányzik.
 - `og:image` relatív útvonal: a végleges domainnel abszolút URL-re kell cserélni.

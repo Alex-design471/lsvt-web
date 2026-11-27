@@ -373,7 +373,13 @@
 "07-piros",
 "12-sötétszürke melírozott"
 ]
+},
+"variants": [
+{
+"size": "3XL",
+"price": 14450
 }
+]
 },
 {
 "id": 36453,
@@ -805,7 +811,22 @@
 "M/L",
 "XS/S"
 ]
+},
+"variants": [
+{
+"size": "XS/S",
+"price": 1990
+},
+{
+"size": "M/L",
+"price": 1990
+},
+{
+"size": "M/L",
+"color": "Athletic Grey",
+"price": 1340
 }
+]
 },
 {
 "id": 36110,
@@ -1490,7 +1511,13 @@
 "A1-koral",
 "A2-mandarinsárga"
 ]
+},
+"variants": [
+{
+"size": "3XL",
+"price": 2750
 }
+]
 },
 {
 "id": 110,
@@ -1551,7 +1578,13 @@
 "12-sötétszürke melírozott",
 "71-piros"
 ]
+},
+"variants": [
+{
+"size": "3XL",
+"price": 15250
 }
+]
 },
 {
 "id": 66,
@@ -1621,6 +1654,20 @@
 "A1-koral",
 "A2-mandarinsárga"
 ]
+},
+"variants": [
+{
+"size": "3XL",
+"price": 3530
+},
+{
+"size": "4XL",
+"price": 3800
+},
+{
+"size": "5XL",
+"price": 3800
 }
+]
 }
 ]

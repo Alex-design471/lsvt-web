@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Rendelések · LS_VT admin</title>
+<link rel="icon" href="assets/img/logo-dark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="assets/experience.css">
+</head>
+<body data-page="admin"><div id="hdr"></div><main id="main">
+<header class="chapter-head wrap"><span class="eyebrow">Admin</span><h1>Rendelések</h1><p id="adm-sub">Jelentkezz be az admin fiókoddal.</p></header>
+<section class="wrap adm">
+  <form class="f adm-login" id="login" hidden>
+    <input id="lemail" type="email" placeholder="E-mail" autocomplete="username" required>
+    <input id="lpass" type="password" placeholder="Jelszó" autocomplete="current-password" required>
+    <button class="btn btn-red" style="justify-content:center">Belépés</button>
+    <p class="form-err" id="lerr"></p>
+  </form>
+  <div id="panel" hidden>
+    <div class="adm-bar">
+      <div id="filters" class="adm-filters"></div>
+      <span class="sp"></span>
+      <button class="btn btn-ghost" id="reload">Frissítés</button>
+      <button class="btn btn-ghost" id="logout">Kilépés</button>
+    </div>
+    <div class="adm-list" id="list"></div>
+  </div>
+  <p class="form-err" id="cfg" hidden>A rendeléskezelés még nincs bekapcsolva: az assets/app.js fájlban a BACKEND url és key értéke üres.</p>
+</section>
+</main><div id="ftr"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/admin.js"></script>
+</body></html>
